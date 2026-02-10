@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import type { Vehicle, CheckItem, CheckItemKey, ErrorResponse } from "./types";
 import { api } from "./api";
+import type { ToastType } from "./Toast";
+
 
 const CHECK_ITEMS: CheckItemKey[] = [
   "TYRES",
@@ -12,10 +14,11 @@ const CHECK_ITEMS: CheckItemKey[] = [
 
 interface Props {
   onSuccess: () => void;
+  showToast: (message: string, type: ToastType) => void;
   // TODO: Add showToast prop to display toast notifications
 }
 
-export function CheckForm({ onSuccess }: Props) {
+export function CheckForm({ onSuccess, showToast }: Props) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [odometerKm, setOdometerKm] = useState("");
@@ -25,6 +28,7 @@ export function CheckForm({ onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     api.getVehicles().then(setVehicles).catch(console.error);
@@ -48,22 +52,26 @@ export function CheckForm({ onSuccess }: Props) {
         vehicleId: selectedVehicle,
         odometerKm: parseFloat(odometerKm),
         items,
+        note: note.trim() ? note.trim() : undefined,
       });
+      showToast("Check submitted successfully!", "success");
 
       // Reset form and display success notification
       setSelectedVehicle("");
       setOdometerKm("");
+      setNote("");
       setItems(CHECK_ITEMS.map((key) => ({ key, status: "OK" as const })));
       onSuccess();
     } catch (err: unknown) {
       const errorResponse = err as ErrorResponse;
       // TODO: Show error toast notification if got error
       if (errorResponse.error?.details) {
-        setValidationErrors(
-          errorResponse.error.details.map((d) => `${d.field}: ${d.reason}`),
-        );
+        const messages = errorResponse.error.details.map((d) => `${d.field}: ${d.reason}`);
+        setValidationErrors(messages);
+        showToast(`Validation error: ${messages.join(", ")}`, "error");
       } else {
         setError("Failed to submit check. Please try again.");
+        showToast("Failed to submit check. Please try again.", "error");
       }
     } finally {
       setLoading(false);
@@ -106,7 +114,8 @@ export function CheckForm({ onSuccess }: Props) {
         <label htmlFor="odometer">Odometer (km) *</label>
         <input
           id="odometer"
-          type="text"
+          type="number"
+          step="any"
           value={odometerKm}
           onChange={(e) => setOdometerKm(e.target.value)}
           placeholder="Enter odometer reading"
@@ -146,6 +155,20 @@ export function CheckForm({ onSuccess }: Props) {
       </div>
 
       {/* TODO: Add a notes textarea field here (optional, max 300 characters) */}
+
+      <div className="form-group">
+  <label htmlFor="note">Notes (optional)</label>
+  <textarea
+    id="note"
+    value={note}
+    onChange={(e) => setNote(e.target.value)}
+    placeholder="Add notes (max 300 characters)"
+    rows={4}
+    maxLength={300}
+  />
+  <div className="char-counter">{note.length}/300</div>
+</div>
+
 
       <button type="submit" disabled={loading}>
         {loading ? "Submitting..." : "Submit Check"}

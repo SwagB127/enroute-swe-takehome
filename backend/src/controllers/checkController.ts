@@ -65,19 +65,38 @@ import { ErrorResponse } from "../types";
  *   }
  * }
  */
-export const createCheck = (req: Request, res: Response): void => {
-  // TODO: Implement the createCheck controller
-  //
-  // Instructions:
-  // 1. Validate the request body using validateCheckRequest(req.body)
-  // 2. If there are validation errors, return a 400 status with ErrorResponse format
-  // 3. If validation passes, call checkService.createCheck() with the appropriate data
-  // 4. Return a 201 status with the created check
-  //
-  // Hint: Look at the getChecks controller below for reference on error handling
-  // Hint: The checkService.createCheck expects CreateCheckData interface
+// export const createCheck = (req: Request, res: Response): void => {
+//   // TODO: Implement the createCheck controller
+//   //
+//   // Instructions:
+//   // 1. Validate the request body using validateCheckRequest(req.body)
+//   // 2. If there are validation errors, return a 400 status with ErrorResponse format
+//   // 3. If validation passes, call checkService.createCheck() with the appropriate data
+//   // 4. Return a 201 status with the created check
+//   //
+//   // Hint: Look at the getChecks controller below for reference on error handling
+//   // Hint: The checkService.createCheck expects CreateCheckData interface
 
-  res.status(501).json({ error: { message: "Not implemented" } });
+//   res.status(501).json({ error: { message: "Not implemented" } });
+// };
+
+export const createCheck = (req: Request, res: Response): void => {
+  const errors = validateCheckRequest(req.body);
+
+  if (errors.length > 0) {
+    const errorResponse: ErrorResponse = {
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Invalid request",
+        details: errors,
+      },
+    };
+    res.status(400).json(errorResponse);
+    return;
+  }
+
+  const createdCheck = checkService.createCheck(req.body);
+  res.status(201).json(createdCheck);
 };
 
 /**

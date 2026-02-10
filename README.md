@@ -68,16 +68,35 @@ Show visual feedback using the provided `Toast.tsx` and `useToast.ts`:
 Please answer these briefly:
 
 1. **Authentication:** If we need to add authentication to this system, how would you approach it?
+For authentication, I would use JWT with refresh tokens: the frontend receives a short-lived access token, and the backend validates it on each request. For authorization, I’d add basic RBAC (role-based access control), e.g., normal users can only submit/view checks for vehicles they are assigned to, while admins can access all records.
+In production, I’d store tokens more securely (e.g., httpOnly cookies + CSRF protection) and add rate limiting and account lockout for repeated failures.
 
 2. **Improvements:** What other improvements would you implement if this were going to production or if you have more time?
+If this were production or I had more time, I’d improve:
+1.Persistence: replace JSON storage with a real DB (Postgres/MySQL), add migrations, indexes, audit fields.
+2.API quality: consistent error codes/format, more test coverage (edge cases, error paths, concurrency).
+3.Security: stricter validation, log redaction, rate limiting, clearer CORS policy.
+4.UX: better inline validation feedback, cleaner loading states, clearer error toasts (surface backend validation details).
+5.Engineering: CI via GitHub Actions (lint/test/build), PR templates, basic code standards.
 
 3. **Tech Stack Experience:** Do you have experience with PHP, Vue.js, or mobile app development (React Native/Flutter)?
+My main background is cybersecurity, so I’m not a pure developer, but I can build and ship small-to-medium features:
+PHP: some exposure (reading code, small fixes, security testing related), not my primary stack.
+Vue.js: comfortable with basics (components, state, API calls), but more hands-on with React.
+Mobile: no full production app experience yet, but I understand the basics of React Native/Flutter and can ramp up.
 
 4. **AI / Tools:** What tools/assistants did you use while working on this assignment (e.g., GitHub Copilot, ChatGPT, etc.)? We appreciate AI usage, we're interested in _how_ you use these tools.
+Tools used: VS Code, Chrome DevTools, Jest.
+For AI, I used ChatGPT mainly to:
+*break tasks into smaller steps and confirm how to verify with tests;
+*quickly narrow down likely bug locations;
 
 5. **Visa Status:** What visa are you currently on?
+I’m currently on a Temporary Graduate visa (subclass 485), valid until 2029, with full work rights.
 
 6. **Languages:** We have users from different backgrounds and industries. What language(s) do you know and what's your proficiency level?
+Mandarin Chinese: native
+English: professional working proficiency (emails, meetings, explaining technical issues)
 
 > **Tip:** You can write your answers directly in this README.md file below each question.
 

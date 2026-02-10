@@ -49,11 +49,13 @@ export function CheckForm({ onSuccess }: Props) {
         vehicleId: selectedVehicle,
         odometerKm: parseFloat(odometerKm),
         items,
+        note: note.trim() ? note.trim() : undefined,
       });
 
       // Reset form and display success notification
       setSelectedVehicle("");
       setOdometerKm("");
+      setNote("");
       setItems(CHECK_ITEMS.map((key) => ({ key, status: "OK" as const })));
       onSuccess();
     } catch (err: unknown) {
@@ -148,6 +150,20 @@ export function CheckForm({ onSuccess }: Props) {
       </div>
 
       {/* TODO: Add a notes textarea field here (optional, max 300 characters) */}
+
+      <div className="form-group">
+  <label htmlFor="note">Notes (optional)</label>
+  <textarea
+    id="note"
+    value={note}
+    onChange={(e) => setNote(e.target.value)}
+    placeholder="Add notes (max 300 characters)"
+    rows={4}
+    maxLength={300}
+  />
+  <div className="char-counter">{note.length}/300</div>
+</div>
+
 
       <button type="submit" disabled={loading}>
         {loading ? "Submitting..." : "Submit Check"}

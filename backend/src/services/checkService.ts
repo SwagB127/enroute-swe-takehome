@@ -56,7 +56,7 @@ export interface CheckFilters {
 // TODO: Fix bug in this service function
 export const createCheck = (checkData: CreateCheckData): Check => {
   // @ts-ignore
-  const hasIssue = checkData.items.some((item) => item.status === "FAILED");
+  const hasIssue = checkData.items.some((item) => item.status === "FAIL");
 
   // Create the new check object with generated ID and timestamp
   // Build the check object conditionally to satisfy exactOptionalPropertyTypes

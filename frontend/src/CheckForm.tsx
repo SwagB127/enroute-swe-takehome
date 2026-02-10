@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import type { Vehicle, CheckItem, CheckItemKey, ErrorResponse } from "./types";
 import { api } from "./api";
+import type { ToastType } from "./Toast";
+
 
 const CHECK_ITEMS: CheckItemKey[] = [
   "TYRES",
@@ -12,10 +14,11 @@ const CHECK_ITEMS: CheckItemKey[] = [
 
 interface Props {
   onSuccess: () => void;
+  showToast: (message: string, type: ToastType) => void;
   // TODO: Add showToast prop to display toast notifications
 }
 
-export function CheckForm({ onSuccess }: Props) {
+export function CheckForm({ onSuccess, showToast }: Props) {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [odometerKm, setOdometerKm] = useState("");
@@ -51,6 +54,7 @@ export function CheckForm({ onSuccess }: Props) {
         items,
         note: note.trim() ? note.trim() : undefined,
       });
+      showToast("Check submitted successfully!", "success");
 
       // Reset form and display success notification
       setSelectedVehicle("");
@@ -62,11 +66,12 @@ export function CheckForm({ onSuccess }: Props) {
       const errorResponse = err as ErrorResponse;
       // TODO: Show error toast notification if got error
       if (errorResponse.error?.details) {
-        setValidationErrors(
-          errorResponse.error.details.map((d) => `${d.field}: ${d.reason}`),
-        );
+        const messages = errorResponse.error.details.map((d) => `${d.field}: ${d.reason}`);
+        setValidationErrors(messages);
+        showToast(`Validation error: ${messages.join(", ")}`, "error");
       } else {
         setError("Failed to submit check. Please try again.");
+        showToast("Failed to submit check. Please try again.", "error");
       }
     } finally {
       setLoading(false);

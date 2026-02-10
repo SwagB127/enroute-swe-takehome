@@ -106,7 +106,8 @@ export function CheckForm({ onSuccess }: Props) {
         <label htmlFor="odometer">Odometer (km) *</label>
         <input
           id="odometer"
-          type="text"
+          type="number"
+          step="any"
           value={odometerKm}
           onChange={(e) => setOdometerKm(e.target.value)}
           placeholder="Enter odometer reading"

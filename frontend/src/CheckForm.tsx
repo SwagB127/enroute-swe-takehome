@@ -25,6 +25,7 @@ export function CheckForm({ onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     api.getVehicles().then(setVehicles).catch(console.error);
